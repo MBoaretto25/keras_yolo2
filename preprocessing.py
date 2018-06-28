@@ -358,21 +358,22 @@ class BatchGenerator(Sequence):
             keypoints_on_image = ia.KeypointsOnImage(keypoints,shape=image.shape)  
             seq_det = self.aug_pipe.to_deterministic()     
             image = seq_det.augment_image(image) 
-            keypoints_aug = seq_det.augment_keypoints([keypoints_on_image])
-            coords = keypoints_aug[0].get_coords_array()  
-            for i in range(0,len(coords),4):
-                xa=coords[i,0]
-                ya=coords[i,1]
-                xb=coords[i+1,0]
-                yb=coords[i+1,1]
-                xc=coords[i+2,0]
-                yc=coords[i+2,1]
-                xd=coords[i+3,0]
-                yd=coords[i+3,1]
-                all_objs[i//4]['xmin'] = max(min(xa,xb,xc,xd),0)
-                all_objs[i//4]['xmax'] = min(max(xa,xb,xc,xd),image.shape[1])
-                all_objs[i//4]['ymin'] = max(min(ya,yb,yc,yd),0)
-                all_objs[i//4]['ymax'] = min(max(ya,yb,yc,yd),image.shape[0]) 
+            if len(all_objs) != 0:
+                keypoints_aug = seq_det.augment_keypoints([keypoints_on_image])
+                coords = keypoints_aug[0].get_coords_array()  
+                for i in range(0,len(coords),4):
+                    xa=coords[i,0]
+                    ya=coords[i,1]
+                    xb=coords[i+1,0]
+                    yb=coords[i+1,1]
+                    xc=coords[i+2,0]
+                    yc=coords[i+2,1]
+                    xd=coords[i+3,0]
+                    yd=coords[i+3,1]
+                    all_objs[i//4]['xmin'] = max(min(xa,xb,xc,xd),0)
+                    all_objs[i//4]['xmax'] = min(max(xa,xb,xc,xd),image.shape[1])
+                    all_objs[i//4]['ymin'] = max(min(ya,yb,yc,yd),0)
+                    all_objs[i//4]['ymax'] = min(max(ya,yb,yc,yd),image.shape[0]) 
               
         # resize the image to standard size
         image = cv2.resize(image, (self.config['IMAGE_W'], self.config['IMAGE_H']))
