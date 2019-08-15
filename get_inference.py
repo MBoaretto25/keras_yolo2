@@ -5,6 +5,7 @@ from keras_yolov2.frontend import YOLO
 import argparse
 import keras
 import json
+import os
 
 argparser = argparse.ArgumentParser(
     description='Train and validate YOLO_v2 model on any dataset')
@@ -49,7 +50,7 @@ def _main_(args):
     yolo.load_weights(weights_path)
 
     inference_model = yolo.get_inference_model()
-    inference_model.save("inference.h5")
+    inference_model.save("{}_inference.h5".format(os.path.split(weights_path)[0]))
 
 
 if __name__ == '__main__':
